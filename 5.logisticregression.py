@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.preprocessing import StandardScaler
 
 class LogisticRegression:
     def __init__(self, learning_rate=0.01, iteration=1000):
@@ -13,7 +14,11 @@ class LogisticRegression:
         return np.concatenate((np.ones((X.shape[0], 1)), X), axis=1)
 
     def sigmoid(self, z):
-        return 1 / (1 + np.exp(-z))
+        return np.where(
+            z >= 0,
+            1 / (1 + np.exp(-z)),
+            np.exp(z) / (1 + np.exp(z))
+        )
 
     def fit(self, X, y):
         X = self.add_intercept(X)
@@ -37,6 +42,10 @@ y = np.where(data.iloc[:, 1].values == 'M', 1, 0)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
 model = LogisticRegression()
 model.fit(X_train, y_train)
 predictions = model.predict(X_test)
@@ -58,8 +67,3 @@ print("Class 0 predicted and true :", conf[0][0])
 print("Class 0 predicted and false :", conf[0][1])
 print("Class 1 predicted and false :", conf[1][0])
 print("Class 1 predicted and true :", conf[1][1])
-
-import random
-X_valid = [X[random.randint(0, 500)] for _ in range(20)]
-Y_valid = [y[random.randint(0, 500)] for _ in range(20)]
-print(Y_valid)
