@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from google.colab import drive
 
 class KMeansCustom:
     def __init__(self, n_clusters, max_iterations=100):
@@ -32,30 +31,20 @@ class KMeansCustom:
             new_centroids.append(centroid)
         return np.array(new_centroids)
 
-    def fit(self, data):
-        centroids = self.initialize_centroids(data)
-        for _ in range(self.max_iterations):
-            clusters = self.assign_to_clusters(data, centroids)
-            new_centroids = self.update_centroids(data, clusters)
-            if np.allclose(centroids, new_centroids):
-                break
-            centroids = new_centroids
-        self.cen = centroids
-        self.lab = clusters
+df = pd.read_csv(r"C:\Users\MONIL\Desktop\Codes\AIML codes\iris_csv (1).csv")
+data = df.iloc[:, :4].values
 
-# Mount Google Drive to access dataset
-drive.mount('/content/drive')
+kmeans = KMeansCustom(n_clusters=3)
+centroids = kmeans.initialize_centroids(data)
 
-iris = pd.read_csv('/content/drive/MyDrive/Datasets/iris_csv (1).csv')
-data = iris.iloc[:, 2:4].values  # Using petal length and petal width
+for _ in range(kmeans.max_iterations):
+    clusters = kmeans.assign_to_clusters(data, centroids)
+    new_centroids = kmeans.update_centroids(data, clusters)
+    if np.all(centroids == new_centroids):
+        break
+    centroids = new_centroids
 
-k = 4
-model = KMeansCustom(n_clusters=k)
-model.fit(data)
-
-plt.scatter(data[:, 0], data[:, 1], c=model.lab, cmap='viridis')
-plt.scatter(model.cen[:, 0], model.cen[:, 1], marker='X', s=200, c='red')
-plt.xlabel('Petal Length (cm)')
-plt.ylabel('Petal Width (cm)')
-plt.title('Custom K-means Clustering on Iris Dataset')
+plt.scatter(data[:, 0], data[:, 1], c=clusters)
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', marker='x')
+plt.title('KMeans Clustering')
 plt.show()
