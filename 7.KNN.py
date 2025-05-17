@@ -23,7 +23,7 @@ class KNN:
     def predict(self, x):
         return [self.predict_single(point) for point in x]
 
-df = pd.read_csv('/Users/swastikagarwal/Downloads/SEM5_RVCE/LAB WORK/AIML/iris_csv (1).csv')
+df = pd.read_csv(r"C:\Users\MONIL\Desktop\Codes\AIML codes\iris_csv (1).csv")
 
 x = df.iloc[:, :-1].values
 y = df.iloc[:, -1].values
